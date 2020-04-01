@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="zh-hans">
+<head>
+    <meta charset="utf-8" />
+    <style>
+        body {
+            max-width: 1024px;
+            margin: 0 auto;
+            font-size: 20px;
+        }
+        #main {
+            background: #eee;
+            min-height: 500px;
+            position: relative;
+        }
+        #input-area {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+        }
+        input {
+            width: 80%;
+            font-size: 20px;
+        }
+        button {
+            font-size: 20px;
+        }
+        #contents img {
+            max-width: 200px;
+        }
+    </style>
+</head>
+<body>
+<div>
+    <div id="main">
+        <div id="contents"></div>
+        <div id="input-area">
+            <input id="text" type="text" />
+            <button id="send">发送</button>
+
+        </div>
+
+    </div>
+</div>
+
+<script>
+    function update() {
+        var messagesDom = document.getElementById("contents");
+        var message = document.getElementById("text").value;
+        document.getElementById("text").value = "";
+        messagesDom.innerHTML += "<div>" + message + "</div>";
+    }
+
+    document.getElementById("send").onclick = update
+
+    document.getElementById("text").onkeydown = function(event) {
+        if (event.code === "Enter") {
+            update();
+        }
+    }
+
+    var dropArea = document.getElementById("main");
+
+    ['dragenter', 'dragover', 'dragleave'].forEach(eventName => {
+        dropArea.addEventListener(eventName, preventDefaults, false)
+    });
+
+    function preventDefaults (e) {
+        e.preventDefault();
+        e.stopPropagation();
+    }
+
+    dropArea.ondrop = function(event) {
+        event.preventDefault();
+        event.stopPropagation();
+
+        var dt = event.dataTransfer;
+        var files = dt.files;
+        var file = files[0];
+
+        if (file) {
+            var reader = new FileReader()
+            reader.readAsDataURL(file)
+            reader.onloadend = function() {
+                var img = document.createElement('img')
+                img.src = reader.result
+                document.getElementById('contents').appendChild(img)
+            }
+        }
+    }
+
+
+
+</script>
+
+</body>
+</html>
